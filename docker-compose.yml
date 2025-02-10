@@ -1,0 +1,24 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+            - ~/pdns-monitor/prometheus/prometheus-data:/prometheus
+            - ~/pdns-monitor/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus'
+            - '--web.console.libraries=/etc/prometheus/console_libraries'
+            - '--web.console.templates=/etc/prometheus/consoles'
+            - '--storage.tsdb.retention.time=10y'
+            - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+            - ~/pdns-monitor/grafana/grafana.ini:/etc/grafana/grafana.ini
+            - ~/pdns-monitor/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+    ports:
+      - 3000:3000
+    links:
+            - prometheus
